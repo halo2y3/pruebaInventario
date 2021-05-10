@@ -1,0 +1,141 @@
+<div class="p-grid p-jc-center">
+  <p-toast></p-toast>
+  <div class="p-col-11">
+    <div class="card">
+      <h5>Inventario</h5>
+      <div class="p-fluid p-formgrid p-grid">
+        <div class="p-field p-col">
+          <label for="firstname2">Usuario:</label>
+          <p-dropdown [options]="listaUsuarios" [(ngModel)]="parametro.idUsuario" placeholder="Seleccionar Usuario"
+            optionValue="idusuario" optionLabel="nombreusuario" [showClear]="true"></p-dropdown>
+
+        </div>
+        <div class="p-field p-col">
+          <label for="lastname2">Fecha Registro</label>
+          <p-calendar [(ngModel)]="parametro.fechaRegistro" dateFormat="yy-mm-dd" inputId="dateformat"></p-calendar>
+        </div>
+        <div class="p-field p-col">
+          <label>&nbsp;</label>
+          <button pButton type="button" label="Consultar" (click)="consultarInventario()"></button>
+        </div>
+      </div>
+    </div>
+
+    <p-table [value]="listaInventario">
+      <ng-template pTemplate="caption">
+        <div class="p-d-flex">
+          <button type="button" pButton pRipple icon="pi pi-plus" label="Crear Registro" (click)="abrirDialogo()"
+            class="p-mr-2"></button>
+          <button type="button" pButton pRipple icon="pi pi-plus" label="Crear Producto" (click)="abrirProductoDialogo()"
+            class="p-mr-2"></button>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Producto</th>
+          <th>Fecha Registro</th>
+          <th>Tipo Registro</th>
+          <th>Cantidad</th>
+          <th>Opciones</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-registro>
+        <tr>
+          <td>{{registro.nombreproducto}}</td>
+          <td>{{registro.fecharegistro |date}}</td>
+          <td>{{registro.tiporegistro}}</td>
+          <td>{{registro.cantidad}}</td>
+          <td><button pButton type="button" label="Editar" (click)="editarInventario(registro)"></button>
+            <button pButton type="button" label="Borrar" (click)="dialogoBorrarInventario(registro)"></button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage" let-columns>
+        <tr>
+          <td [attr.colspan]="5">
+            No records found
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <p-dialog [(visible)]="inventarioDialog" [style]="{width: '450px'}" header="Gestion Inventario" [modal]="true"
+      styleClass="p-fluid">
+      <ng-template pTemplate="content">
+        <div class="p-field">
+          <label for="description">Producto:</label>
+          <p-dropdown [options]="listaProductos" [(ngModel)]="inventarioRegistro.idproductoProductos"
+            placeholder="Seleccionar Producto" optionValue="idproducto" optionLabel="nombreproducto" [showClear]="true">
+          </p-dropdown>
+        </div>
+        <div class="p-field">
+          <label for="description">Usuario Registrador:</label>
+          <p-dropdown [options]="listaUsuarios" [(ngModel)]="inventarioRegistro.idusuarioRegistrador"
+            placeholder="Seleccionar Usuario" optionValue="idusuario" optionLabel="nombreusuario" [showClear]="true">
+          </p-dropdown>
+        </div>
+        <div class="p-field">
+          <label for="description">Tipo de Registro:</label>
+          <p-dropdown [options]="listaTipo" [(ngModel)]="inventarioRegistro.tiporegistro" placeholder="Seleccione tipo"
+          optionValue="value"  
+          optionLabel="label" [showClear]="true"></p-dropdown>
+        </div>        
+        <div class="p-field">
+          <label for="description">Fecha de Registro:</label>
+          <p-calendar [(ngModel)]="inventarioRegistro.fechaingresoegreso" required></p-calendar>
+        </div>
+        <div class="p-field">
+          <label for="description">Cantidad:</label>
+          <input type="text" pInputText id="name" [(ngModel)]="inventarioRegistro.cantidad" required />
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+          (click)="hideDialog()"></button>
+        <button pButton pRipple [label]="inventarioRegistro?.idregistro ? 'Editar':'Guardar'" icon="pi pi-check"
+          class="p-button-text" (click)="saveRegistro()"></button>
+      </ng-template>
+    </p-dialog>
+
+
+    <p-dialog [(visible)]="productoDialog" [style]="{width: '450px'}" header="Gestion Producto" [modal]="true"
+      styleClass="p-fluid">
+      <ng-template pTemplate="content">
+        <div class="p-field">
+          <label for="description">Nombre producto:</label>
+          <input type="text" pInputText id="name" [(ngModel)]="producto.nombreproducto" required />
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+          (click)="hideProductoDialog()"></button>
+        <button pButton pRipple [label]="producto?.idproducto ? 'Editar':'Guardar'" icon="pi pi-check"
+          class="p-button-text" (click)="saveProducto()"></button>
+      </ng-template>
+
+    </p-dialog>
+
+    <p-dialog [(visible)]="confirmacionDialog" [style]="{width: '500px'}" header="Borrar Registro" [modal]="true"
+      styleClass="p-fluid">
+      <ng-template pTemplate="content">
+        <div style="height: 300px">
+          <div class="p-field">
+            <label for="description">Usuario:</label>
+            <p-dropdown [options]="listaUsuarios" [(ngModel)]="idUsuarioModificador" placeholder="Seleccionar Usuario"
+              optionValue="idusuario" optionLabel="nombreusuario" [showClear]="true" required></p-dropdown>
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text"
+          (click)="hideBorradoDialog()"></button>
+        <button pButton pRipple label="Confirmar Borrado" icon="pi pi-check" class="p-button-text"
+          (click)="confirmarBorrado()"></button>
+      </ng-template>
+    </p-dialog>
+
+  </div>
+</div>
